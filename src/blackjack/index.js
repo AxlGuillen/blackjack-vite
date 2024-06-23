@@ -1,11 +1,9 @@
 import {
   createDeck,
   drawCard,
-  getCardValue,
   updateReferences,
   accumulatePoints,
   createCard,
-  determineWinner,
   computerTurn,
 } from "./usecases/index";
 
