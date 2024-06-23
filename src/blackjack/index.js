@@ -1,4 +1,13 @@
-import { createDeck, drawCard, getCardValue } from "./usecases/index";
+import {
+  createDeck,
+  drawCard,
+  getCardValue,
+  updateReferences,
+  accumulatePoints,
+  createCard,
+  determineWinner,
+  computerTurn,
+} from "./usecases/index";
 
 const miModulo = (() => {
   "use strict";
@@ -49,86 +58,7 @@ const miModulo = (() => {
       jugadoresDiv.appendChild(jugadorDiv);
     }
 
-    actualizarReferencias();
-  };
-
-  const actualizarReferencias = () => {
-    divCartasJugadores = document.querySelectorAll(".divCartas");
-    puntosHtml = document.querySelectorAll("small");
-  };
-
-  const acumularPuntos = (carta, turno) => {
-    puntosJugadores[turno] = puntosJugadores[turno] + getCardValue(carta);
-    puntosHtml[turno].innerText = puntosJugadores[turno];
-    return puntosJugadores[turno];
-  };
-
-  const crearCarta = (carta, turno) => {
-    const imgCarta = document.createElement("img");
-    imgCarta.src = `assets/cartas/${carta}.png`;
-    imgCarta.classList.add("carta");
-    divCartasJugadores[turno].append(imgCarta);
-  };
-
-  const determinarGanador = () => {
-    setTimeout(() => {
-      let puntosGanadores = 0;
-      let indicesGanadores = [];
-      const numJugadores = puntosJugadores.length - 1;
-      const puntosComputadora = puntosJugadores[numJugadores];
-
-      for (let i = 0; i < puntosJugadores.length; i++) {
-        if (puntosJugadores[i] <= 21 && puntosJugadores[i] > puntosGanadores) {
-          puntosGanadores = puntosJugadores[i];
-        }
-      }
-
-      indicesGanadores = puntosJugadores.reduce((acc, puntosJugador, index) => {
-        if (puntosJugador === puntosGanadores) {
-          acc.push(index);
-        }
-        return acc;
-      }, []);
-
-      if (indicesGanadores.length === 1) {
-        if (indicesGanadores[0] === numJugadores) {
-          alert(
-            "La computadora ganó con una puntuación de: " + puntosGanadores
-          );
-        } else {
-          alert(
-            "El jugador " +
-              (indicesGanadores[0] + 1) +
-              " ganó con una puntuación de: " +
-              puntosGanadores
-          );
-        }
-      } else {
-        let ganadores = indicesGanadores.map((index) => {
-          return index === numJugadores
-            ? "Computadora"
-            : "Jugador " + (index + 1);
-        });
-        alert(
-          "Empate entre: " +
-            ganadores.join(", ") +
-            " con una puntuación de: " +
-            puntosGanadores
-        );
-      }
-
-      btnNuevo.disabled = false;
-    }, 1000);
-  };
-
-  const turnoComputadora = (puntosMinimos) => {
-    let puntosComputadora = 0;
-    do {
-      const carta = drawCard(deck);
-      puntosComputadora = acumularPuntos(carta, puntosJugadores.length - 1);
-      crearCarta(carta, puntosJugadores.length - 1);
-    } while (puntosComputadora < puntosMinimos && puntosMinimos <= 21);
-    determinarGanador();
+    updateReferences(divCartasJugadores, puntosHtml);
   };
 
   const siguienteTurno = () => {
@@ -148,14 +78,26 @@ const miModulo = (() => {
             : acc,
         0
       );
-      turnoComputadora(puntosMinimos);
+      computerTurn(
+        puntosMinimos,
+        deck,
+        puntosJugadores,
+        divCartasJugadores,
+        puntosHtml,
+        btnNuevo
+      );
     }
   };
 
   btnPedir.addEventListener("click", () => {
     const carta = drawCard(deck);
-    const puntosJugador = acumularPuntos(carta, turnoActual);
-    crearCarta(carta, turnoActual);
+    const puntosJugador = accumulatePoints(
+      carta,
+      turnoActual,
+      puntosJugadores,
+      puntosHtml
+    );
+    createCard(carta, turnoActual, divCartasJugadores);
     if (puntosJugador >= 21) {
       btnPedir.disabled = true;
       btnDetener.disabled = true;
