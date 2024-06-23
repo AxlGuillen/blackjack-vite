@@ -1,6 +1,4 @@
-import { createDeck } from "./usecases/create-deck";
-import { drawCard } from "./usecases/draw-card";
-import { getCardValue } from "./usecases/get-card-value";
+import { createDeck, drawCard, getCardValue } from "./usecases/index";
 
 const miModulo = (() => {
   "use strict";
