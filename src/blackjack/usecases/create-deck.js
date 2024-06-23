@@ -1,21 +1,23 @@
 import { shuffle } from "underscore";
 
 /**
- * This function create a new deck
- * @param {Array<String>} cardTypes Example: ["C", "D", "H", "S"]
- * @param {Array<String>} specialTypes Example: ["A", "J", "Q", "K"]
- * @returns {Array<String>} returns a new shuffle deck
+ * This function creates a new deck
+ * @param {Array<String>} cardTypes - Example: ["C", "D", "H", "S"]
+ * @param {Array<String>} specialTypes - Example: ["A", "J", "Q", "K"]
+ * @returns {Array<String>} A new shuffled deck
  */
 
 export const createDeck = (cardTypes, specialTypes) => {
-  if (!cardTypes || cardTypes.length === 0)
+  if (!cardTypes || cardTypes.length === 0) {
     throw new Error(
-      "cardTypes is requered  and it needs to be Array of string."
+      "cardTypes is required and it needs to be an array of strings."
     );
-  if (!specialTypes || specialTypes.length === 0)
+  }
+  if (!specialTypes || specialTypes.length === 0) {
     throw new Error(
-      "specialTypes is requered  and it needs to be Array of string."
+      "specialTypes is required and it needs to be an array of strings."
     );
+  }
 
   let deck = [];
 
