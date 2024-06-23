@@ -6,3 +6,6 @@ export { accumulatePoints } from "./accumulate-points";
 export { createCard } from "./create-card";
 export { determineWinner } from "./determine-winner";
 export { computerTurn } from "./computer-turn";
+export { initializeGame } from "./initialize-game";
+export { generatePlayerSections } from "./generate-player-sections";
+export { nextTurn } from "./next-turn";

@@ -5,6 +5,9 @@ import {
   accumulatePoints,
   createCard,
   computerTurn,
+  initializeGame,
+  generatePlayerSections,
+  nextTurn,
 } from "./usecases/index";
 
 const miModulo = (() => {
@@ -17,7 +20,7 @@ const miModulo = (() => {
   let puntosJugadores = [];
   let turnoActual = 0;
 
-  // Referencias del html
+  // Referencias del HTML
   const btnNuevo = document.querySelector("#btnNuevo"),
     btnPedir = document.querySelector("#btnPedir"),
     btnDetener = document.querySelector("#btnDetener"),
@@ -28,63 +31,25 @@ const miModulo = (() => {
   let puntosHtml = [];
 
   const inicializarJuego = () => {
-    const numJugadores = parseInt(numJugadoresInput.value);
-    generarApartadosJugadores(numJugadores);
-
-    deck = createDeck(tipos, especiales);
-    puntosJugadores = Array(numJugadores + 1).fill(0); // Incluye la computadora
-    turnoActual = 0;
-
-    puntosHtml.forEach((elem) => (elem.innerText = 0));
-    divCartasJugadores.forEach((elem) => (elem.innerHTML = ""));
+    const {
+      deck: newDeck,
+      puntosJugadores: newPuntosJugadores,
+      turnoActual: newTurnoActual,
+    } = initializeGame(
+      divCartasJugadores,
+      puntosHtml,
+      numJugadoresInput,
+      jugadoresDiv,
+      generatePlayerSections,
+      tipos,
+      especiales
+    );
+    deck = newDeck;
+    puntosJugadores = newPuntosJugadores;
+    turnoActual = newTurnoActual;
 
     btnPedir.disabled = false;
     btnDetener.disabled = false;
-  };
-
-  const generarApartadosJugadores = (numJugadores) => {
-    jugadoresDiv.innerHTML = ""; // Limpia los apartados existentes
-
-    for (let i = 1; i <= numJugadores; i++) {
-      const jugadorDiv = document.createElement("div");
-      jugadorDiv.classList.add("col");
-
-      jugadorDiv.innerHTML = `
-        <h1>Jugador ${i} - <small>0</small></h1>
-        <div id="jugador${i}-cartas" class="divCartas"></div>
-      `;
-      jugadoresDiv.appendChild(jugadorDiv);
-    }
-
-    updateReferences(divCartasJugadores, puntosHtml);
-  };
-
-  const siguienteTurno = () => {
-    if (turnoActual < puntosJugadores.length - 2) {
-      turnoActual++;
-      btnPedir.disabled = false;
-      btnDetener.disabled = false;
-    } else {
-      turnoActual++;
-      btnPedir.disabled = true;
-      btnDetener.disabled = true;
-
-      const puntosMinimos = puntosJugadores.reduce(
-        (acc, puntos, index) =>
-          index < puntosJugadores.length - 1 && puntos <= 21 && puntos > acc
-            ? puntos
-            : acc,
-        0
-      );
-      computerTurn(
-        puntosMinimos,
-        deck,
-        puntosJugadores,
-        divCartasJugadores,
-        puntosHtml,
-        btnNuevo
-      );
-    }
   };
 
   btnPedir.addEventListener("click", () => {
@@ -99,14 +64,28 @@ const miModulo = (() => {
     if (puntosJugador >= 21) {
       btnPedir.disabled = true;
       btnDetener.disabled = true;
-      siguienteTurno();
+      turnoActual = nextTurn(
+        turnoActual,
+        puntosJugadores,
+        deck,
+        divCartasJugadores,
+        puntosHtml,
+        btnNuevo
+      );
     }
   });
 
   btnDetener.addEventListener("click", () => {
     btnPedir.disabled = true;
     btnDetener.disabled = true;
-    siguienteTurno();
+    turnoActual = nextTurn(
+      turnoActual,
+      puntosJugadores,
+      deck,
+      divCartasJugadores,
+      puntosHtml,
+      btnNuevo
+    );
   });
 
   btnNuevo.addEventListener("click", () => {
