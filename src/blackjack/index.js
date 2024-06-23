@@ -1,5 +1,6 @@
 import { createDeck } from "./usecases/create-deck";
 import { drawCard } from "./usecases/draw-card";
+import { getCardValue } from "./usecases/get-card-value";
 
 const miModulo = (() => {
   "use strict";
@@ -59,7 +60,7 @@ const miModulo = (() => {
   };
 
   const acumularPuntos = (carta, turno) => {
-    puntosJugadores[turno] = puntosJugadores[turno] + valorCarta(carta);
+    puntosJugadores[turno] = puntosJugadores[turno] + getCardValue(carta);
     puntosHtml[turno].innerText = puntosJugadores[turno];
     return puntosJugadores[turno];
   };
